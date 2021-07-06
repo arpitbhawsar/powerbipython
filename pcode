@@ -1,0 +1,39 @@
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib.ticker as ticker
+
+sns.set(rc={"lines.linewidth":3})
+sns.set_style("white",{'font.family':'DIN Condensed', 'font.serif':'DIN Condensed'})
+
+ax = plt.gca()
+plt.tight_layout(rect=[0.05, 0.01, 0.91, 1])
+
+ax.yaxis.set_label_position("left")
+ax.yaxis.set_ticks_position("left")
+
+
+dataset.sort_values(by=['departure_year', 'departure_week','group_id','trade'])
+
+#Make limits dynamic
+palette ={"High volume": "cadetblue", "Low volume": "red", "No alert": "lightgrey"}
+
+dataset['group_id']=dataset['group_id'].astype(str)
+g=sns.scatterplot(data=dataset[ (dataset.latestweeks==True) ].sort_values(by='group_id',ascending=False), x="departure_week",               y='reference_od',hue='alert_text',ax=ax,size='size5',sizes=(50,2500),palette=palette)
+
+
+g.set_palette='red'
+#g._legend.set_title('Alert')
+h,l = g.get_legend_handles_labels()
+
+
+if    dataset.alert_text.nunique()  > 1 and str(dataset.latestweeks)=='True' :
+  plt.legend(h[1:1],l[1:1],bbox_to_anchor=(1, 1), loc=2)  
+else :
+    plt.legend(h[1:dataset.alert_text.nunique()+1],l[1:dataset.alert_text.nunique()+1],bbox_to_anchor=(1, 1), loc=2)
+    
+
+ax.set(xlabel=' DEPARTURE WEEK',ylabel=' ')
+ax.xaxis.set_major_formatter(ticker.FormatStrFormatter('%d'))
+ax.xaxis.set_major_locator(ticker.MultipleLocator(base=1))
+
+plt.show()
